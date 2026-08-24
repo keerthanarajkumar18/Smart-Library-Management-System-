@@ -25,6 +25,8 @@ add_library(SmartLibrary
     src/BorrowRecord.cpp
     src/Library.cpp
     src/ReservationQueue.cpp
+    src/StandardFineStrategy.cpp
+    src/RoleBasedFineStrategy.cpp
 )
 
 # Tell SmartLibrary where header files are
@@ -108,6 +110,24 @@ target_link_libraries(LibraryReservationTest PRIVATE
     gtest_main
 )
 
+add_executable(FineStrategyTest
+    tests/FineStrategyTest.cpp
+)
+
+target_link_libraries(FineStrategyTest PRIVATE
+    SmartLibrary
+    gtest_main
+)
+
+add_executable(LibraryFineTest
+    tests/LibraryFineTest.cpp
+)
+
+target_link_libraries(LibraryFineTest PRIVATE
+    SmartLibrary
+    gtest_main
+)
+
 # Enable CTest
 enable_testing()
 
@@ -145,4 +165,14 @@ add_test(
 add_test(
     NAME LibraryReservationTest
     COMMAND LibraryReservationTest
+)
+
+add_test(
+    NAME FineStrategyTest
+    COMMAND FineStrategyTest
+)
+
+add_test(
+    NAME LibraryFineTest
+    COMMAND LibraryFineTest
 )

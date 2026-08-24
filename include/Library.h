@@ -4,11 +4,13 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <memory>
 
 #include "Book.h"
 #include "Member.h"
 #include "BorrowRecord.h"
 #include "ReservationQueue.h"
+#include "FineStrategy.h"
 
 class Library
 {
@@ -26,6 +28,9 @@ private:
 
     // ISBN -> ReservationQueue
     std::unordered_map<std::string, ReservationQueue> reservationQueues; 
+
+    // Fine strategy for calculating fines
+    std::shared_ptr<FineStrategy> fineStrategy;
 
 public:
 
@@ -60,7 +65,7 @@ public:
         const std::string&isbn
     );
 
-    void returnBook(
+    double returnBook(
         const std::string& memberId,
         const std::string& isbn
     );
@@ -79,6 +84,15 @@ public:
     const ReservationQueue& getReservationQueue(
         const std::string& isbn
     ) const;
+
+    // Fine strategy management
+    void setFineStrategy(
+        std::shared_ptr<FineStrategy> strategy
+    );
+
+    //library.setFineStrategy(
+    //     std::make_shared<RoleBasedFineStrategy>()
+    //);
 };
 
 #endif

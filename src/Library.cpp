@@ -236,7 +236,7 @@ void Library::borrowBook(
     memberIt->second.addBorrowRecord(recordId);
 }
 
-void Library::returnBook(
+double Library::returnBook(
     const std::string& memberId,
     const std::string& isbn
 )
@@ -290,6 +290,14 @@ void Library::returnBook(
     //6. Get return date
     auto returnDate = std::chrono::system_clock::now();
 
+    //Calculate fine if a fine strategy is set
+    double fine = 0.0;
+
+    if(fineStrategy)
+    {
+        fine = fineStrategy->calculateFine(*activeRecord, memberIt->second);
+    }
+
     //7. Close the borrow record
     activeRecord->markReturned(returnDate);
 
@@ -319,6 +327,9 @@ void Library::returnBook(
             << std::endl;
         }
     }
+
+    // 10. Return calculated fine
+    return fine;
 }
 
 //Get a const reference to a borrow record by its ID. If the record does not exist, throw an exception.
@@ -390,4 +401,12 @@ const ReservationQueue& Library::getReservationQueue(
     }
 
     return it->second;
+}
+
+// Set the fine strategy for calculating fines. This allows the library to switch between different fine calculation strategies at runtime.
+void Library::setFineStrategy(
+    std::shared_ptr<FineStrategy> strategy
+)
+{
+    fineStrategy = strategy;
 }
