@@ -11,6 +11,7 @@
 #include "BorrowRecord.h"
 #include "ReservationQueue.h"
 #include "FineStrategy.h"
+#include "AccessControl.h"
 
 class Library
 {
@@ -32,11 +33,17 @@ private:
     // Fine strategy for calculating fines
     std::shared_ptr<FineStrategy> fineStrategy;
 
+    // Access control
+    AccessControl accessControl;
+
 public:
 
     // Book management
     void addBook(const Book& book);
     void removeBook(const std::string& isbn);
+
+    bool addBook(const Member& member, const Book& book);
+    bool removeBook(const Member& member, const std::string& isbn);
 
     // Book lookup
     Book& getBook(const std::string& isbn);

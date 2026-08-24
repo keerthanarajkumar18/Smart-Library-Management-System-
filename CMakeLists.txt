@@ -27,6 +27,7 @@ add_library(SmartLibrary
     src/ReservationQueue.cpp
     src/StandardFineStrategy.cpp
     src/RoleBasedFineStrategy.cpp
+    src/AccessControl.cpp   
 )
 
 # Tell SmartLibrary where header files are
@@ -128,6 +129,24 @@ target_link_libraries(LibraryFineTest PRIVATE
     gtest_main
 )
 
+add_executable(AccessControlTest
+    tests/AccessControlTest.cpp
+)
+
+target_link_libraries(AccessControlTest PRIVATE
+    SmartLibrary
+    gtest_main
+)
+
+add_executable(LibraryAccessControlTest
+    tests/LibraryAccessControlTest.cpp
+)
+
+target_link_libraries(LibraryAccessControlTest PRIVATE
+    SmartLibrary
+    gtest_main
+)
+
 # Enable CTest
 enable_testing()
 
@@ -175,4 +194,14 @@ add_test(
 add_test(
     NAME LibraryFineTest
     COMMAND LibraryFineTest
+)
+
+add_test(
+    NAME AccessControlTest
+    COMMAND AccessControlTest
+)
+
+add_test(
+    NAME LibraryAccessControlTest
+    COMMAND LibraryAccessControlTest
 )

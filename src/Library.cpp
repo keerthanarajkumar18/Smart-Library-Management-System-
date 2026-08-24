@@ -16,6 +16,26 @@ void Library::addBook(const Book& book)
     books.emplace(isbn, book);
 }
 
+//Add a book to the library if the member is authorized. Return true if the book was added, false otherwise.
+bool Library::addBook(
+    const Member& member,
+    const Book& book
+)
+{
+    // Check authorization
+    if (!accessControl.isAuthorized(
+            member,
+            Operation::AddBook))
+    {
+        return false;
+    }
+
+    // Use existing addBook logic
+    addBook(book);
+
+    return true;
+}
+
 //Remove a book from the library by its ISBN. If the book does not exist, throw an exception.
 void Library::removeBook(const std::string& isbn)
 {
@@ -79,6 +99,26 @@ void Library::removeMember(const std::string& memberId)
     }
 
     members.erase(it);
+}
+
+//Remove a book from the library if the member is authorized. Return true if the book was removed, false otherwise.
+bool Library::removeBook(
+    const Member& member,
+    const std::string& isbn
+)
+{
+    // Check authorization
+    if (!accessControl.isAuthorized(
+            member,
+            Operation::RemoveBook))
+    {
+        return false;
+    }
+
+    // Use existing removeBook logic
+    removeBook(isbn);
+
+    return true;
 }
 
 //Get a reference to a member by their ID. If the member does not exist, throw an exception.
