@@ -36,6 +36,10 @@ private:
     // Access control
     AccessControl accessControl;
 
+    // Helper function to validate ISBN format
+    bool isValidISBN(
+    const std::string& isbn) const;
+
 public:
 
     // Book management

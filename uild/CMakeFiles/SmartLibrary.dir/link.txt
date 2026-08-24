@@ -1,2 +1,0 @@
-C:\FOSSEE\MSYS\mingw64\bin\ar.exe qc libSmartLibrary.a CMakeFiles/SmartLibrary.dir/src/Book.cpp.obj CMakeFiles/SmartLibrary.dir/src/Member.cpp.obj CMakeFiles/SmartLibrary.dir/src/BorrowRecord.cpp.obj CMakeFiles/SmartLibrary.dir/src/Library.cpp.obj CMakeFiles/SmartLibrary.dir/src/ReservationQueue.cpp.obj
-C:\FOSSEE\MSYS\mingw64\bin\ranlib.exe libSmartLibrary.a

@@ -4,6 +4,8 @@
 #include "Book.h"
 #include "Member.h"
 #include "BorrowRecord.h"
+#include "Library.h"
+#include "LibraryException.h"
 
 int main()
 {
@@ -50,6 +52,75 @@ int main()
     std::cout << "Returned after update: "
               << record.isReturned()
               << '\n';
+
+    Library library;
+    
+    try
+    {
+        Book invalidBook(
+            "Invalid Book",
+            "Unknown Author",
+            "ABC",
+            "Testing",
+            5
+        );
+
+        library.addBook(invalidBook);
+    }
+    catch (const InvalidISBNException& e)
+    {
+        std::cout
+            << "Error: "
+            << e.what()
+            << '\n';
+    }
+
+    try
+    {
+        library.getBook(
+            "9780132350884"
+        );
+    }
+    catch (const BookNotFoundException& e)
+    {
+        std::cout
+            << "Error: "
+            << e.what()
+            << '\n';
+    }
+
+    Member student(
+    "S001",
+    "Student",
+    MemberRole::Student
+    );
+
+    try
+    {
+        Book newBook(
+            "Clean Architecture",
+            "Robert C. Martin",
+            "9780134494166",
+            "Programming",
+            5
+        );
+
+        library.addBook(
+            student,
+            newBook
+        );
+    }
+    catch (const UnauthorizedActionException& e)
+    {
+        std::cout
+            << "Error: "
+            << e.what()
+            << '\n';
+    }
+    
+    std::cout
+    << "Program continues normally."
+    << '\n';
 
     return 0;
 }

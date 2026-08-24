@@ -28,6 +28,7 @@ add_library(SmartLibrary
     src/StandardFineStrategy.cpp
     src/RoleBasedFineStrategy.cpp
     src/AccessControl.cpp   
+    src/Logger.cpp
 )
 
 # Tell SmartLibrary where header files are
@@ -147,6 +148,42 @@ target_link_libraries(LibraryAccessControlTest PRIVATE
     gtest_main
 )
 
+add_executable(LibraryExceptionTest
+    tests/LibraryExceptionTest.cpp
+)
+
+target_link_libraries(LibraryExceptionTest PRIVATE
+    SmartLibrary
+    gtest_main
+)
+
+add_executable(LibraryExceptionIntegrationTest
+    tests/LibraryExceptionIntegrationTest.cpp
+)
+
+target_link_libraries(LibraryExceptionIntegrationTest PRIVATE
+    SmartLibrary
+    gtest_main
+)
+
+add_executable(LoggerTest
+    tests/LoggerTest.cpp
+)
+
+target_link_libraries(LoggerTest PRIVATE
+    SmartLibrary
+    gtest_main
+)
+
+
+add_executable(LibraryLoggerTest
+    tests/LibraryLoggerTest.cpp
+)
+
+target_link_libraries(LibraryLoggerTest PRIVATE
+    SmartLibrary
+    gtest_main
+)
 # Enable CTest
 enable_testing()
 
@@ -204,4 +241,24 @@ add_test(
 add_test(
     NAME LibraryAccessControlTest
     COMMAND LibraryAccessControlTest
+)
+
+add_test(
+    NAME LibraryExceptionTest
+    COMMAND LibraryExceptionTest
+)
+
+add_test(
+    NAME LibraryExceptionIntegrationTest
+    COMMAND LibraryExceptionIntegrationTest
+)
+
+add_test(
+    NAME LoggerTest
+    COMMAND LoggerTest
+)
+
+add_test(
+    NAME LibraryLoggerTest
+    COMMAND LibraryLoggerTest
 )

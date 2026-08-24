@@ -1,7 +1,13 @@
 #include <gtest/gtest.h>
+#include "Member.h"
+#include "Book.h"
+#include "LibraryException.h"
 #include "Library.h"
 
-TEST(LibraryAccessControlTest, StudentCannotAddBook)
+TEST(
+    LibraryAccessControlTest,
+    StudentCannotAddBook
+)
 {
     Library library;
 
@@ -19,12 +25,13 @@ TEST(LibraryAccessControlTest, StudentCannotAddBook)
         5
     );
 
-    bool result = library.addBook(
-        student,
-        book
+    EXPECT_THROW(
+        library.addBook(
+            student,
+            book
+        ),
+        UnauthorizedActionException
     );
-
-    EXPECT_FALSE(result);
 
     EXPECT_EQ(
         library.getBookCount(),
@@ -32,7 +39,10 @@ TEST(LibraryAccessControlTest, StudentCannotAddBook)
     );
 }
 
-TEST(LibraryAccessControlTest, FacultyCannotAddBook)
+TEST(
+    LibraryAccessControlTest,
+    FacultyCannotAddBook
+)
 {
     Library library;
 
@@ -50,12 +60,13 @@ TEST(LibraryAccessControlTest, FacultyCannotAddBook)
         5
     );
 
-    bool result = library.addBook(
-        faculty,
-        book
+    EXPECT_THROW(
+        library.addBook(
+            faculty,
+            book
+        ),
+        UnauthorizedActionException
     );
-
-    EXPECT_FALSE(result);
 
     EXPECT_EQ(
         library.getBookCount(),
@@ -93,8 +104,10 @@ TEST(LibraryAccessControlTest, LibrarianCanAddBook)
         1
     );
 }
-
-TEST(LibraryAccessControlTest, StudentCannotRemoveBook)
+TEST(
+    LibraryAccessControlTest,
+    StudentCannotRemoveBook
+)
 {
     Library library;
 
@@ -114,20 +127,23 @@ TEST(LibraryAccessControlTest, StudentCannotRemoveBook)
 
     library.addBook(book);
 
-    bool result = library.removeBook(
-        student,
-        "9780132350884"
+    EXPECT_THROW(
+        library.removeBook(
+            student,
+            "9780132350884"
+        ),
+        UnauthorizedActionException
     );
-
-    EXPECT_FALSE(result);
 
     EXPECT_EQ(
         library.getBookCount(),
         1
     );
 }
-
-TEST(LibraryAccessControlTest, LibrarianCanRemoveBook)
+TEST(
+    LibraryAccessControlTest,
+    LibrarianCanRemoveBook
+)
 {
     Library library;
 
@@ -147,12 +163,12 @@ TEST(LibraryAccessControlTest, LibrarianCanRemoveBook)
 
     library.addBook(book);
 
-    bool result = library.removeBook(
-        librarian,
-        "9780132350884"
+    EXPECT_TRUE(
+        library.removeBook(
+            librarian,
+            "9780132350884"
+        )
     );
-
-    EXPECT_TRUE(result);
 
     EXPECT_EQ(
         library.getBookCount(),

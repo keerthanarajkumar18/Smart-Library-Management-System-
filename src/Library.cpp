@@ -1,16 +1,75 @@
 #include "Library.h"
+#include "LibraryException.h"
+#include "Logger.h"
+
 #include <stdexcept>
 #include <chrono>
 #include <iostream>
+#include <cctype>
+
+// Helper function to validate ISBN format
+bool Library::isValidISBN(
+    const std::string& isbn
+) const
+{
+    // ISBN-13 must contain exactly 13 digits
+    if (isbn.length() != 13)
+    {
+        return false;
+    }
+
+    // Every character must be a digit
+    for (char c : isbn)
+    {
+        if (!std::isdigit(
+                static_cast<unsigned char>(c)))
+        {
+            return false;
+        }
+    }
+
+    int sum = 0;
+
+    // Calculate ISBN-13 checksum
+    for (int i = 0; i < 12; ++i)
+    {
+        int digit = isbn[i] - '0';
+
+        if (i % 2 == 0)
+        {
+            sum += digit;
+        }
+        else
+        {
+            sum += digit * 3;
+        }
+    }
+
+    int checkDigit =
+        (10 - (sum % 10)) % 10;
+
+    return checkDigit ==
+           (isbn[12] - '0');
+}
 
 //Add a book to the library. If a book with the same ISBN already exists, throw an exception.
 void Library::addBook(const Book& book)
 {
-    const std::string& isbn = book.getISBN();
+    const std::string& isbn =
+        book.getISBN();
 
+    // Validate ISBN before adding book
+    if (!isValidISBN(isbn))
+    {
+        throw InvalidISBNException(isbn);
+    }
+
+    // Check duplicate ISBN
     if (books.find(isbn) != books.end())
     {
-        throw std::runtime_error("Book with this ISBN already exists.");
+        throw std::runtime_error(
+            "Book with this ISBN already exists."
+        );
     }
 
     books.emplace(isbn, book);
@@ -27,7 +86,9 @@ bool Library::addBook(
             member,
             Operation::AddBook))
     {
-        return false;
+        throw UnauthorizedActionException(
+            "Add book"
+        );
     }
 
     // Use existing addBook logic
@@ -43,10 +104,29 @@ void Library::removeBook(const std::string& isbn)
 
     if (it == books.end())
     {
-        throw std::runtime_error("Book not found.");
+        throw BookNotFoundException(isbn);
     }
 
     books.erase(it);
+}
+
+bool Library::removeBook(
+    const Member& member,
+    const std::string& isbn
+)
+{
+    if (!accessControl.isAuthorized(
+            member,
+            Operation::RemoveBook))
+    {
+        throw UnauthorizedActionException(
+            "Remove book"
+        );
+    }
+
+    removeBook(isbn);
+
+    return true;
 }
 
 //Get a reference to a book by its ISBN. If the book does not exist, throw an exception.
@@ -56,20 +136,22 @@ Book& Library::getBook(const std::string& isbn)
 
     if (it == books.end())
     {
-        throw std::runtime_error("Book not found.");
+        throw BookNotFoundException(isbn);
     }
 
     return it->second;
 }
 
 //Get a const reference to a book by its ISBN. If the book does not exist, throw an exception.
-const Book& Library::getBook(const std::string& isbn) const
+const Book& Library::getBook(
+    const std::string& isbn
+) const
 {
     auto it = books.find(isbn);
 
     if (it == books.end())
     {
-        throw std::runtime_error("Book not found.");
+        throw BookNotFoundException(isbn);
     }
 
     return it->second;
@@ -99,26 +181,6 @@ void Library::removeMember(const std::string& memberId)
     }
 
     members.erase(it);
-}
-
-//Remove a book from the library if the member is authorized. Return true if the book was removed, false otherwise.
-bool Library::removeBook(
-    const Member& member,
-    const std::string& isbn
-)
-{
-    // Check authorization
-    if (!accessControl.isAuthorized(
-            member,
-            Operation::RemoveBook))
-    {
-        return false;
-    }
-
-    // Use existing removeBook logic
-    removeBook(isbn);
-
-    return true;
 }
 
 //Get a reference to a member by their ID. If the member does not exist, throw an exception.
@@ -240,7 +302,7 @@ void Library::borrowBook(
 
     if(bookIt == books.end())
     {
-        throw std::runtime_error("Book not found.");
+        throw BookNotFoundException(isbn);
     }
 
     //3. Check if the book has available copies
@@ -248,8 +310,8 @@ void Library::borrowBook(
 
     if(book.getAvailableCopies() <= 0)
     {
-        throw std::runtime_error("No available copies of the book.");
-    }
+        throw BookUnavailableException(isbn);
+    }   
 
     //4. Borrow the book and create a borrow record
     book.borrowCopy();
@@ -274,6 +336,12 @@ void Library::borrowBook(
     borrowRecords.emplace(recordId, record);
 
     memberIt->second.addBorrowRecord(recordId);
+
+    Logger::log(
+        LogAction::BORROW,
+        memberId,
+        isbn
+    );
 }
 
 double Library::returnBook(
@@ -294,37 +362,55 @@ double Library::returnBook(
 
     if(bookIt == books.end())
     {
-        throw std::runtime_error("Book not found.");
+        throw BookNotFoundException(isbn);
     }
-
-    //3. Search member's borrowing history 
-    const auto& history = memberIt->second.getBorrowingHistory();
+        
+    const auto& history =
+        memberIt->second.getBorrowingHistory();
 
     BorrowRecord* activeRecord = nullptr;
 
-    //4. Find the active borrow record for this book
-    for(const auto& recordId : history)
+    bool returnedRecordFound = false;
+
+    for (const auto& recordId : history)
     {
-        auto recordIt = borrowRecords.find(recordId);
-        
-        if(recordIt == borrowRecords.end())
+        auto recordIt =
+            borrowRecords.find(recordId);
+
+        if (recordIt == borrowRecords.end())
         {
-            continue; // Skip if record not found
+            continue;
         }
 
-        BorrowRecord& record = recordIt->second;
+        BorrowRecord& record =
+            recordIt->second;
 
-        if(record.getBookISBN() == isbn && !record.isReturned())
+        // Check whether this record belongs
+        // to the requested book
+        if (record.getBookISBN() == isbn)
         {
-            activeRecord = &record;
-            break;
+            // Book is currently borrowed
+            if (!record.isReturned())
+            {
+                activeRecord = &record;
+                break;
+            }
+
+            // Book was already returned
+            returnedRecordFound = true;
         }
     }
 
-    //5. If no active borrow record found, throw an exception
-    if(activeRecord == nullptr)
+        if (activeRecord == nullptr)
     {
-        throw std::runtime_error("No active borrow record found for this book and member.");
+        if (returnedRecordFound)
+        {
+            throw AlreadyReturnedException(isbn);
+        }
+
+        throw std::runtime_error(
+            "No borrowing record found for this book and member."
+        );
     }
 
     //6. Get return date
@@ -338,11 +424,26 @@ double Library::returnBook(
         fine = fineStrategy->calculateFine(*activeRecord, memberIt->second);
     }
 
+    if (fine > 0.0)
+{
+    Logger::log(
+    LogAction::FINE,
+    memberId,
+    std::to_string(fine)
+);
+}
+
     //7. Close the borrow record
     activeRecord->markReturned(returnDate);
 
     //8.Increase the available copies of the book
     bookIt->second.returnCopy();
+
+     Logger::log(
+    LogAction::RETURN,
+    memberId,
+    isbn
+);
 
     //9.Check reservation queue
     auto queueIt = reservationQueues.find(isbn);
@@ -407,9 +508,7 @@ void Library::reserveBook(
 
     if (bookIt == books.end())
     {
-        throw std::runtime_error(
-            "Book not found."
-        );
+        throw BookNotFoundException(isbn);
     }
 
     // Book is available
@@ -424,6 +523,12 @@ void Library::reserveBook(
 
     // Add member to reservation queue
     reservationQueues[isbn].addMember(memberId);
+
+    Logger::log(
+        LogAction::RESERVATION,
+        memberId,
+        isbn
+    );
 }
 
 const ReservationQueue& Library::getReservationQueue(
