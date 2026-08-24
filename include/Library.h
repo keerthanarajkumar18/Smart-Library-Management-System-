@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <vector>
 #include <memory>
+#include <chrono>
 
 #include "Book.h"
 #include "Member.h"
@@ -39,6 +40,8 @@ private:
     // Helper function to validate ISBN format
     bool isValidISBN(
     const std::string& isbn) const;
+
+    double totalFinesCollected = 0.0;
 
 public:
 
@@ -104,6 +107,28 @@ public:
     //library.setFineStrategy(
     //     std::make_shared<RoleBasedFineStrategy>()
     //);
+
+    // Access control management
+    const std::unordered_map<std::string, Book>&
+    getBooks() const;
+
+    const std::unordered_map<std::string, Member>&
+    getMembers() const;
+
+    const std::unordered_map<std::string, BorrowRecord>&
+    getBorrowRecords() const;
+
+    double getTotalFinesCollected() const;
+
+    void addBorrowRecordForTesting(
+    const std::string& recordId,
+    const std::string& memberId,
+    const std::string& isbn,
+    std::chrono::system_clock::time_point borrowDate,
+    std::chrono::system_clock::time_point dueDate
+    );
+
+
 };
 
 #endif

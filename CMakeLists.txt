@@ -29,6 +29,7 @@ add_library(SmartLibrary
     src/RoleBasedFineStrategy.cpp
     src/AccessControl.cpp   
     src/Logger.cpp
+    src/StatisticsService.cpp
 )
 
 # Tell SmartLibrary where header files are
@@ -184,6 +185,16 @@ target_link_libraries(LibraryLoggerTest PRIVATE
     SmartLibrary
     gtest_main
 )
+
+add_executable(StatisticsTest
+    tests/StatisticsTest.cpp
+)
+
+target_link_libraries(StatisticsTest PRIVATE
+    SmartLibrary
+    gtest_main
+)
+
 # Enable CTest
 enable_testing()
 
@@ -261,4 +272,9 @@ add_test(
 add_test(
     NAME LibraryLoggerTest
     COMMAND LibraryLoggerTest
+)
+
+add_test(
+    NAME StatisticsTest
+    COMMAND StatisticsTest
 )

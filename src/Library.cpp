@@ -424,6 +424,8 @@ double Library::returnBook(
         fine = fineStrategy->calculateFine(*activeRecord, memberIt->second);
     }
 
+    totalFinesCollected += fine;
+
     if (fine > 0.0)
 {
     Logger::log(
@@ -554,4 +556,65 @@ void Library::setFineStrategy(
 )
 {
     fineStrategy = strategy;
+}
+
+const std::unordered_map<std::string, Book>&
+Library::getBooks() const
+{
+    return books;
+}
+
+const std::unordered_map<std::string, Member>&
+Library::getMembers() const
+{
+    return members;
+}
+
+const std::unordered_map<std::string, BorrowRecord>&
+Library::getBorrowRecords() const
+{
+    return borrowRecords;
+}
+
+double Library::getTotalFinesCollected() const
+{
+    return totalFinesCollected;
+}
+
+void Library::addBorrowRecordForTesting(
+    const std::string& recordId,
+    const std::string& memberId,
+    const std::string& isbn,
+    std::chrono::system_clock::time_point borrowDate,
+    std::chrono::system_clock::time_point dueDate
+)
+{
+    // Check member
+    if (members.find(memberId) == members.end())
+    {
+        throw std::runtime_error(
+            "Member not found."
+        );
+    }
+
+    // Check book
+    if (books.find(isbn) == books.end())
+    {
+        throw std::runtime_error(
+            "Book not found."
+        );
+    }
+
+    BorrowRecord record(
+        recordId,
+        isbn,
+        memberId,
+        borrowDate,
+        dueDate
+    );
+
+    borrowRecords.emplace(
+        recordId,
+        record
+    );
 }

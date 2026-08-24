@@ -6,55 +6,16 @@
 #include "BorrowRecord.h"
 #include "Library.h"
 #include "LibraryException.h"
+#include "StatisticsService.h"
 
 int main()
 {
-    Book book(
-        "Clean Code",
-        "Robert C. Martin",
-        "9780132350884",
-        "Programming",
-        5
-    );
-
-    Member member(
-        "M001",
-        "Keerthana",
-        MemberRole::Student
-    );
-
-    auto borrowDate =
-        std::chrono::system_clock::now();
-
-    auto dueDate =
-        borrowDate + std::chrono::hours(24 * 7);
-
-    BorrowRecord record(
-        "BR001",
-        book.getISBN(),
-        member.getMemberId(),
-        borrowDate,
-        dueDate
-    );
-
-    std::cout << "Record ID: "
-              << record.getRecordId() << '\n';
-
-    std::cout << "Returned: "
-              << std::boolalpha
-              << record.isReturned()
-              << '\n';
-
-    record.markReturned(
-        std::chrono::system_clock::now()
-    );
-
-    std::cout << "Returned after update: "
-              << record.isReturned()
-              << '\n';
+    // =====================================================
+    // Phase 8 — Exception Handling
+    // =====================================================
 
     Library library;
-    
+
     try
     {
         Book invalidBook(
@@ -89,10 +50,14 @@ int main()
             << '\n';
     }
 
+    // =====================================================
+    // Phase 7 — Access Control
+    // =====================================================
+
     Member student(
-    "S001",
-    "Student",
-    MemberRole::Student
+        "S001",
+        "Student",
+        MemberRole::Student
     );
 
     try
@@ -117,10 +82,54 @@ int main()
             << e.what()
             << '\n';
     }
-    
+
     std::cout
-    << "Program continues normally."
-    << '\n';
+        << "Program continues normally."
+        << '\n';
+
+
+    // =====================================================
+    // Phase 10 — Statistics Dashboard
+    // =====================================================
+
+    Book book1(
+        "Clean Code",
+        "Robert C. Martin",
+        "9780132350884",
+        "Programming",
+        5
+    );
+
+    Book book2(
+        "C++ Primer",
+        "Stanley Lippman",
+        "9780321714114",
+        "Programming",
+        5
+    );
+
+    Member member(
+        "M001",
+        "Keerthana",
+        MemberRole::Student
+    );
+
+    library.addBook(book1);
+    library.addBook(book2);
+
+    library.addMember(member);
+
+    library.borrowBook(
+        "M001",
+        "9780132350884"
+    );
+
+    LibraryStatistics statistics =
+        StatisticsService::generate(library);
+
+    StatisticsService::display(
+        statistics
+    );
 
     return 0;
 }
