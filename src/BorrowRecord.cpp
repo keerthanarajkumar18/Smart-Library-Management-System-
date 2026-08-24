@@ -1,5 +1,5 @@
 #include "BorrowRecord.h"
-
+#include <stdexcept>
 BorrowRecord::BorrowRecord(
     const std::string& recordId,
     const std::string& bookISBN,
@@ -11,6 +11,7 @@ BorrowRecord::BorrowRecord(
     memberId(memberId),
     borrowDate(borrowDate),
     dueDate(dueDate),
+    returnDate(),
     returned(false) {}
 
 const std::string& BorrowRecord::getRecordId() const 
@@ -55,9 +56,10 @@ void BorrowRecord::markReturned(
     std::chrono::system_clock::time_point date
 )
 {
-    if (!returned)
+    if (returned)
     {
-        returnDate = date;
-        returned = true;
+        throw std::runtime_error("Book has already been returned.");
     }
+    this->returnDate = date;
+    this->returned = true;
 }

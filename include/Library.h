@@ -7,6 +7,7 @@
 
 #include "Book.h"
 #include "Member.h"
+#include "BorrowRecord.h"
 
 class Library
 {
@@ -16,6 +17,11 @@ private:
 
     // Member ID -> Member
     std::unordered_map<std::string, Member> members;
+
+    // Borrow Record ID -> BorrowRecord
+    std::unordered_map<std::string, BorrowRecord> borrowRecords;
+
+    int nextRecordId = 1; // For generating unique borrow record IDs
 
 public:
 
@@ -40,9 +46,25 @@ public:
     std::vector<Book> searchByAuthor(const std::string& author) const;
     std::vector<Book> searchByCategory(const std::string& category) const;
 
-    // Statistics/basic information
+    // Statistics
     std::size_t getBookCount() const;
     std::size_t getMemberCount() const;
+
+    // Borrowing and returning books
+    void borrowBook(
+        const std::string& memberId,
+        const std::string&isbn
+    );
+
+    void returnBook(
+        const std::string& memberId,
+        const std::string& isbn
+    );
+
+    // Borrow record lookup
+    const BorrowRecord& getBorrowRecord(
+        const std::string& recordId
+    ) const;
 };
 
 #endif

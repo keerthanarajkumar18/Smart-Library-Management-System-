@@ -80,6 +80,16 @@ target_link_libraries(LibraryTest PRIVATE
     gtest_main
 )
 
+add_executable(LibraryBorrowReturnTest
+    tests/LibraryBorrowReturnTest.cpp
+)
+
+target_link_libraries(LibraryBorrowReturnTest PRIVATE
+    SmartLibrary
+    gtest_main
+)
+
+
 # Enable CTest
 enable_testing()
 
@@ -102,4 +112,9 @@ add_test(
 add_test(
     NAME LibraryTest
     COMMAND LibraryTest
+)
+
+add_test(
+    NAME LibraryBorrowReturnTest
+    COMMAND LibraryBorrowReturnTest
 )

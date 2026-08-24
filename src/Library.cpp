@@ -1,5 +1,6 @@
 #include "Library.h"
 #include <stdexcept>
+#include <chrono>
 
 //Add a book to the library. If a book with the same ISBN already exists, throw an exception.
 void Library::addBook(const Book& book)
@@ -177,4 +178,135 @@ std::size_t Library::getBookCount() const
 std::size_t Library::getMemberCount() const
 {
     return members.size();
+}
+
+//Borrow a book for a member. If the member or book does not exist, or if there are no available copies of the book, throw an exception.
+void Library::borrowBook(
+    const std::string& memberId,
+    const std::string& isbn
+)
+{
+    //1. Check if the member exists
+    auto memberIt = members.find(memberId);
+
+    if(memberIt == members.end())
+    {
+        throw std::runtime_error("Member not found.");
+    }
+
+    //2. Check if the book exists
+    auto bookIt = books.find(isbn);
+
+    if(bookIt == books.end())
+    {
+        throw std::runtime_error("Book not found.");
+    }
+
+    //3. Check if the book has available copies
+    Book& book = bookIt->second;
+
+    if(book.getAvailableCopies() <= 0)
+    {
+        throw std::runtime_error("No available copies of the book.");
+    }
+
+    //4. Borrow the book and create a borrow record
+    book.borrowCopy();
+
+    std::string recordId =
+    "BR" +
+    std::string(3 - std::to_string(nextRecordId).length(), '0') +
+    std::to_string(nextRecordId++);
+
+    auto borrowDate = std::chrono::system_clock::now();
+
+    auto dueDate = borrowDate + std::chrono::hours(24 * 14);    //2 weeks borrowing period
+
+    BorrowRecord record(
+        recordId,
+        isbn,
+        memberId,
+        borrowDate,
+        dueDate
+    );
+
+    borrowRecords.emplace(recordId, record);
+
+    memberIt->second.addBorrowRecord(recordId);
+}
+
+void Library::returnBook(
+    const std::string& memberId,
+    const std::string& isbn
+)
+{
+    //1. Check if the member exists
+    auto memberIt = members.find(memberId);
+
+    if(memberIt == members.end())
+    {
+        throw std::runtime_error("Member not found.");
+    }
+
+    //2. Check if the book exists
+    auto bookIt = books.find(isbn);
+
+    if(bookIt == books.end())
+    {
+        throw std::runtime_error("Book not found.");
+    }
+
+    //3. Search member's borrowing history 
+    const auto& history = memberIt->second.getBorrowingHistory();
+
+    BorrowRecord* activeRecord = nullptr;
+
+    //4. Find the active borrow record for this book
+    for(const auto& recordId : history)
+    {
+        auto recordIt = borrowRecords.find(recordId);
+        
+        if(recordIt == borrowRecords.end())
+        {
+            continue; // Skip if record not found
+        }
+
+        BorrowRecord& record = recordIt->second;
+
+        if(record.getBookISBN() == isbn && !record.isReturned())
+        {
+            activeRecord = &record;
+            break;
+        }
+    }
+
+    //5. If no active borrow record found, throw an exception
+    if(activeRecord == nullptr)
+    {
+        throw std::runtime_error("No active borrow record found for this book and member.");
+    }
+
+    //6. Get return date
+    auto returnDate = std::chrono::system_clock::now();
+
+    //7. Close the borrow record
+    activeRecord->markReturned(returnDate);
+
+    //8.Increase the available copies of the book
+    bookIt->second.returnCopy();
+}
+
+//Get a const reference to a borrow record by its ID. If the record does not exist, throw an exception.
+const BorrowRecord& Library::getBorrowRecord(
+    const std::string& recordId
+) const
+{
+    auto it = borrowRecords.find(recordId);
+
+    if(it == borrowRecords.end())
+    {
+        throw std::runtime_error("Borrow record not found.");
+    }
+
+    return it->second;
 }
