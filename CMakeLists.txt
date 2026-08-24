@@ -23,6 +23,7 @@ add_library(SmartLibrary
     src/Book.cpp
     src/Member.cpp
     src/BorrowRecord.cpp
+    src/Library.cpp
 )
 
 # Tell SmartLibrary where header files are
@@ -70,6 +71,15 @@ target_link_libraries(BorrowRecordTest PRIVATE
     gtest_main
 )
 
+add_executable(LibraryTest
+    tests/LibraryTest.cpp
+)
+
+target_link_libraries(LibraryTest PRIVATE
+    SmartLibrary
+    gtest_main
+)
+
 # Enable CTest
 enable_testing()
 
@@ -87,4 +97,9 @@ add_test(
 add_test(
     NAME BorrowRecordTest
     COMMAND BorrowRecordTest
+)
+
+add_test(
+    NAME LibraryTest
+    COMMAND LibraryTest
 )
