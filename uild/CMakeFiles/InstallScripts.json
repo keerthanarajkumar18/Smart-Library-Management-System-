@@ -1,0 +1,10 @@
+{
+	"InstallScripts" : 
+	[
+		"C:/Users/KEERTHANA/OneDrive/Desktop/MCW Training/Library_Management_System/uild/cmake_install.cmake",
+		"C:/Users/KEERTHANA/OneDrive/Desktop/MCW Training/Library_Management_System/uild/googletest-build/cmake_install.cmake",
+		"C:/Users/KEERTHANA/OneDrive/Desktop/MCW Training/Library_Management_System/uild/googletest-build/googlemock/cmake_install.cmake",
+		"C:/Users/KEERTHANA/OneDrive/Desktop/MCW Training/Library_Management_System/uild/googletest-build/googletest/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

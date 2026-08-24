@@ -1,6 +1,7 @@
 #include "Library.h"
 #include <stdexcept>
 #include <chrono>
+#include <iostream>
 
 //Add a book to the library. If a book with the same ISBN already exists, throw an exception.
 void Library::addBook(const Book& book)
@@ -294,6 +295,30 @@ void Library::returnBook(
 
     //8.Increase the available copies of the book
     bookIt->second.returnCopy();
+
+    //9.Check reservation queue
+    auto queueIt = reservationQueues.find(isbn);
+
+    if (queueIt != reservationQueues.end())
+    {
+    ReservationQueue& queue = queueIt->second;
+
+        if (!queue.isEmpty())
+        {
+        const std::string nextMember = queue.front();
+
+        // Remove member from queue
+        queue.pop();
+
+        // For now, simply notify using console output
+        std::cout
+            << "Book "
+            << isbn
+            << " is now available for member "
+            << nextMember
+            << std::endl;
+        }
+    }
 }
 
 //Get a const reference to a borrow record by its ID. If the record does not exist, throw an exception.
@@ -306,6 +331,62 @@ const BorrowRecord& Library::getBorrowRecord(
     if(it == borrowRecords.end())
     {
         throw std::runtime_error("Borrow record not found.");
+    }
+
+    return it->second;
+}
+
+void Library::reserveBook(
+    const std::string& memberId,
+    const std::string& isbn
+)
+{
+    // Check member
+    auto memberIt = members.find(memberId);
+
+    if (memberIt == members.end())
+    {
+        throw std::runtime_error(
+            "Member not found."
+        );
+    }
+
+    // Check book
+    auto bookIt = books.find(isbn);
+
+    if (bookIt == books.end())
+    {
+        throw std::runtime_error(
+            "Book not found."
+        );
+    }
+
+    // Book is available
+    // No need to reserve it.
+    if (bookIt->second.getAvailableCopies() > 0)
+    {
+        throw std::runtime_error(
+            "Book is currently available. "
+            "Borrow it instead of reserving."
+        );
+    }
+
+    // Add member to reservation queue
+    reservationQueues[isbn].addMember(memberId);
+}
+
+const ReservationQueue& Library::getReservationQueue(
+    const std::string& isbn
+) const
+{
+    auto it =
+        reservationQueues.find(isbn);
+
+    if (it == reservationQueues.end())
+    {
+        throw std::runtime_error(
+            "No reservation queue exists for this book."
+        );
     }
 
     return it->second;

@@ -24,6 +24,7 @@ add_library(SmartLibrary
     src/Member.cpp
     src/BorrowRecord.cpp
     src/Library.cpp
+    src/ReservationQueue.cpp
 )
 
 # Tell SmartLibrary where header files are
@@ -89,6 +90,23 @@ target_link_libraries(LibraryBorrowReturnTest PRIVATE
     gtest_main
 )
 
+add_executable(ReservationQueueTest
+    tests/ReservationQueueTest.cpp
+)
+
+target_link_libraries(ReservationQueueTest PRIVATE
+    SmartLibrary
+    gtest_main
+)
+
+add_executable(LibraryReservationTest
+    tests/LibraryReservationTest.cpp
+)
+
+target_link_libraries(LibraryReservationTest PRIVATE
+    SmartLibrary
+    gtest_main
+)
 
 # Enable CTest
 enable_testing()
@@ -117,4 +135,14 @@ add_test(
 add_test(
     NAME LibraryBorrowReturnTest
     COMMAND LibraryBorrowReturnTest
+)
+
+add_test(
+    NAME ReservationQueueTest
+    COMMAND ReservationQueueTest
+)
+
+add_test(
+    NAME LibraryReservationTest
+    COMMAND LibraryReservationTest
 )

@@ -8,6 +8,7 @@
 #include "Book.h"
 #include "Member.h"
 #include "BorrowRecord.h"
+#include "ReservationQueue.h"
 
 class Library
 {
@@ -22,6 +23,9 @@ private:
     std::unordered_map<std::string, BorrowRecord> borrowRecords;
 
     int nextRecordId = 1; // For generating unique borrow record IDs
+
+    // ISBN -> ReservationQueue
+    std::unordered_map<std::string, ReservationQueue> reservationQueues; 
 
 public:
 
@@ -64,6 +68,16 @@ public:
     // Borrow record lookup
     const BorrowRecord& getBorrowRecord(
         const std::string& recordId
+    ) const;
+
+    //Reservation management
+    void reserveBook(
+        const std::string& memberId,
+        const std::string& isbn
+    );
+
+    const ReservationQueue& getReservationQueue(
+        const std::string& isbn
     ) const;
 };
 
