@@ -30,6 +30,7 @@ add_library(SmartLibrary
     src/AccessControl.cpp   
     src/Logger.cpp
     src/StatisticsService.cpp
+    src/LibraryService.cpp
 )
 
 # Tell SmartLibrary where header files are
@@ -195,6 +196,15 @@ target_link_libraries(StatisticsTest PRIVATE
     gtest_main
 )
 
+add_executable(LibraryServiceTest
+    tests/LibraryServiceTest.cpp
+)
+
+target_link_libraries(LibraryServiceTest PRIVATE
+    SmartLibrary
+    gtest_main
+)
+
 # Enable CTest
 enable_testing()
 
@@ -277,4 +287,9 @@ add_test(
 add_test(
     NAME StatisticsTest
     COMMAND StatisticsTest
+)
+
+add_test(
+    NAME LibraryServiceTest
+    COMMAND LibraryServiceTest
 )
