@@ -214,6 +214,15 @@ target_link_libraries(MultithreadingTest PRIVATE
     gtest_main
 )
 
+add_executable(EndToEndTest
+    tests/EndToEndTest.cpp
+)
+
+target_link_libraries(EndToEndTest PRIVATE
+    SmartLibrary
+    gtest_main
+)
+
 # Enable CTest
 enable_testing()
 
@@ -306,4 +315,9 @@ add_test(
 add_test(
     NAME MultithreadingTest
     COMMAND MultithreadingTest
+)
+
+add_test(
+    NAME EndToEndTest
+    COMMAND EndToEndTest
 )
