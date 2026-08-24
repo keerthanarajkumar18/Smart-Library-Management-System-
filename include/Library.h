@@ -1,6 +1,6 @@
 #ifndef LIBRARY_H
 #define LIBRARY_H
-
+#include <mutex> // std::mutex
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -14,9 +14,13 @@
 #include "FineStrategy.h"
 #include "AccessControl.h"
 
+
 class Library
 {
 private:
+    // Mutex for thread safety
+    std::mutex libraryMutex{};
+
     // ISBN -> Book
     std::unordered_map<std::string, Book> books;
 
@@ -41,7 +45,10 @@ private:
     bool isValidISBN(
     const std::string& isbn) const;
 
+    // Total fines collected by the library
     double totalFinesCollected = 0.0;
+
+
 
 public:
 

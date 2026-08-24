@@ -2,6 +2,7 @@
 #include "LibraryException.h"
 #include "Logger.h"
 
+#include <mutex>
 #include <stdexcept>
 #include <chrono>
 #include <iostream>
@@ -289,6 +290,8 @@ void Library::borrowBook(
     const std::string& isbn
 )
 {
+    std::lock_guard<std::mutex> lock(libraryMutex);
+
     //1. Check if the member exists
     auto memberIt = members.find(memberId);
 
@@ -349,6 +352,8 @@ double Library::returnBook(
     const std::string& isbn
 )
 {
+    std::lock_guard<std::mutex> lock(libraryMutex);
+
     //1. Check if the member exists
     auto memberIt = members.find(memberId);
 

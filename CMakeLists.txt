@@ -205,6 +205,15 @@ target_link_libraries(LibraryServiceTest PRIVATE
     gtest_main
 )
 
+add_executable(MultithreadingTest
+    tests/MultithreadingTest.cpp
+)
+
+target_link_libraries(MultithreadingTest PRIVATE
+    SmartLibrary
+    gtest_main
+)
+
 # Enable CTest
 enable_testing()
 
@@ -292,4 +301,9 @@ add_test(
 add_test(
     NAME LibraryServiceTest
     COMMAND LibraryServiceTest
+)
+
+add_test(
+    NAME MultithreadingTest
+    COMMAND MultithreadingTest
 )
