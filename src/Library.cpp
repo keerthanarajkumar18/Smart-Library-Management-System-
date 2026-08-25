@@ -74,6 +74,12 @@ void Library::addBook(const Book& book)
     }
 
     books.emplace(isbn, book);
+
+    // persist to database
+    if (bookRepository != nullptr)
+    {
+        bookRepository->save(book);
+    }
 }
 
 //Add a book to the library if the member is authorized. Return true if the book was added, false otherwise.
@@ -622,4 +628,23 @@ void Library::addBorrowRecordForTesting(
         recordId,
         record
     );
+}
+
+void Library::setBookRepository(
+    BookRepository& repository
+)
+{
+    bookRepository = &repository;
+}
+void Library::loadBooks(
+    const std::vector<Book>& loadedBooks
+)
+{
+    for (const Book& book : loadedBooks)
+    {
+        books.emplace(
+            book.getISBN(),
+            book
+        );
+    }
 }

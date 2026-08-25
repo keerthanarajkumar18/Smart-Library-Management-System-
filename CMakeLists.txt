@@ -31,6 +31,9 @@ add_library(SmartLibrary
     src/Logger.cpp
     src/StatisticsService.cpp
     src/LibraryService.cpp
+    src/Database.cpp
+    src/DatabaseSchema.cpp
+    src/BookRepository.cpp
 )
 
 # Tell SmartLibrary where header files are
@@ -41,12 +44,25 @@ target_include_directories(SmartLibrary PUBLIC
 # Main application
 add_executable(SmartLibraryApp
     src/main.cpp
+    src/LibraryApplication.cpp
 )
 
 target_link_libraries(SmartLibraryApp PRIVATE
     SmartLibrary
 )
 
+add_library(sqlite3 STATIC
+    third_party/sqlite/sqlite3.c
+)
+
+target_include_directories(sqlite3
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/third_party/sqlite
+)
+target_link_libraries(SmartLibrary
+    PUBLIC
+        sqlite3
+)
 # -------------------------
 # Tests
 # -------------------------

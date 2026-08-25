@@ -123,3 +123,35 @@ void LibraryService::removeBook(
         isbn
     );
 }
+
+Member& LibraryService::getMember(
+    const std::string& memberId
+)
+{
+    return library.getMember(memberId);
+}
+
+const Member& LibraryService::getMember(
+    const std::string& memberId
+) const
+{
+    return library.getMember(memberId);
+}
+
+const std::unordered_map<std::string, Book>&
+LibraryService::getBooks() const
+{
+    return library.getBooks();
+}
+
+const std::unordered_map<std::string, Member>&
+LibraryService::getMembers() const
+{
+    return library.getMembers();
+}
+
+const std::unordered_map<std::string, BorrowRecord>&
+LibraryService::getBorrowRecords() const
+{
+    return library.getBorrowRecords();
+}

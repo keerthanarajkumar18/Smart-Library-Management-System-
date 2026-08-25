@@ -3,11 +3,13 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 #include "Book.h"
 #include "Statistics.h"
 #include "Member.h"
 #include "StatisticsService.h"
+#include "BorrowRecord.h"
 
 class Library;
 
@@ -82,7 +84,22 @@ public:
         const std::string& memberId
     );
 
+    Member& getMember(
+        const std::string& memberId
+    );
 
+    const Member& getMember(
+        const std::string& memberId
+    ) const;
+
+    const std::unordered_map<std::string, Book>&
+    getBooks() const;
+
+    const std::unordered_map<std::string, Member>&
+    getMembers() const;
+
+    const std::unordered_map<std::string, BorrowRecord>&
+    getBorrowRecords() const;
 
 };
 

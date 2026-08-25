@@ -13,11 +13,15 @@
 #include "ReservationQueue.h"
 #include "FineStrategy.h"
 #include "AccessControl.h"
+#include "BookRepository.h"
 
 
 class Library
 {
 private:
+    // Database repository for books
+    BookRepository* bookRepository = nullptr;
+
     // Mutex for thread safety
     std::mutex libraryMutex{};
 
@@ -135,7 +139,16 @@ public:
     std::chrono::system_clock::time_point dueDate
     );
 
+    // Display borrowing records
+    void showMyLibraryRecords();
+    void showAllBorrowRecords();
 
+    // Set the book repository
+    void setBookRepository(BookRepository& repository);
+    // Load books from the repository
+    void loadBooks(
+    const std::vector<Book>& books
+    );
 };
 
 #endif
