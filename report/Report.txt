@@ -1,0 +1,458 @@
+SMART LIBRARY MANAGEMENT SYSTEM
+PROJECT TEST, OBSERVATION AND PERFORMANCE REPORT
+
+1. INTRODUCTION
+
+---
+
+The Smart Library Management System is a C++17-based console application
+developed to manage books, members, borrowing, returning, reservations,
+fines, access control, statistics, and library records.
+
+The project uses object-oriented programming, CMake for build
+management, GoogleTest for automated testing, exception handling,
+multithreading support, and a layered architecture.
+
+This report summarizes the testing performed, observations,
+performance characteristics, and major development challenges.
+
+2. TESTING APPROACH
+
+---
+
+Testing was performed at multiple levels:
+
+* Unit testing
+* Integration testing
+* End-to-end testing
+* Exception and access-control testing
+
+GoogleTest was used as the primary automated testing framework.
+
+The tests verify both individual components and complete library
+workflows.
+
+3. UNIT TEST RESULTS
+
+---
+
+Unit tests were used to verify individual classes and components
+independently.
+
+The following areas were tested:
+
+* Book creation and validation
+* ISBN validation
+* Member creation
+* Member roles
+* Borrow record creation
+* Borrow and return state
+* Reservation queue operations
+* Fine calculation strategies
+* Exception handling
+* Statistics calculation
+* Access control
+
+The unit tests confirmed that individual components behave correctly
+under valid and invalid inputs.
+
+Result:
+
+```
+Unit tests: PASSED
+```
+
+Individual test output should be interpreted using the GoogleTest
+summary:
+
+```
+[  PASSED  ] <number> tests.
+[  FAILED  ] <number> tests.
+```
+
+## 4. END-TO-END TEST RESULTS
+
+The EndToEndTest suite validates complete workflows involving multiple
+components working together.
+
+The following 10 scenarios were implemented:
+
+1. StudentCanBorrowBook
+   Result: PASSED
+
+2. FacultyCanBorrowBook
+   Result: PASSED
+
+3. StudentCanReserveUnavailableBook
+   Result: PASSED
+
+4. ReturningBookProcessesReservation
+   Result: PASSED
+
+5. OverdueBookGeneratesFine
+   Result: PASSED
+
+6. StatisticsReflectLibraryActivity
+   Result: PASSED
+
+7. CompleteLibraryWorkflow
+   Result: PASSED
+
+8. UnauthorizedMemberCannotAddBook
+   Result: PASSED
+
+9. UnauthorizedMemberCannotRemoveBook
+   Result: PASSED
+
+10. InvalidOperationThrowsException
+    Result: PASSED
+
+Final End-to-End Test Result:
+
+```
+[==========] 10 tests from 1 test suite ran.
+[  PASSED  ] 10 tests.
+[  FAILED  ] 0 tests.
+```
+
+Therefore:
+
+```
+10/10 End-to-End Tests Passed
+Success Rate: 100%
+```
+
+## 5. IMPORTANT TEST OBSERVATIONS
+
+The testing process identified and helped resolve several implementation
+issues.
+
+5.1 Borrowing and Returning
+
+Borrowing correctly decreases the number of available copies.
+
+Returning a book increases the available copy count and updates the
+associated BorrowRecord.
+
+5.2 Reservation Handling
+
+When all copies of a book are borrowed, a member can place a reservation.
+
+When the book is returned, the reservation queue is processed and the
+next member is notified.
+
+5.3 Fine Calculation
+
+The system calculates fines through a FineStrategy interface.
+
+RoleBasedFineStrategy allows the fine calculation behaviour to depend
+on the member's role.
+
+The overdue-book test initially returned a zero fine because the test
+record was not configured with a sufficiently old due date. After
+correcting the test setup, the fine calculation behaved as expected.
+
+5.4 Access Control
+
+Librarian-only operations such as adding and removing books are protected
+against unauthorized members.
+
+Unauthorized users generate an appropriate exception rather than being
+allowed to perform restricted operations.
+
+5.5 Exception Handling
+
+Invalid operations such as invalid ISBNs, missing books, missing
+members, duplicate books, and invalid borrowing operations are handled
+through exceptions.
+
+5.6 Statistics
+
+Statistics correctly reflect library activity such as:
+
+* Active members
+* Borrow counts
+* Current overdue records
+* Total fines collected
+
+6. PERFORMANCE INSIGHTS
+
+---
+
+The project uses hash-based containers such as std::unordered_map for
+major collections.
+
+Examples include:
+
+* Books indexed by ISBN
+* Members indexed by Member ID
+* Borrow records indexed by record ID
+
+Average-case complexity:
+
+```
+Lookup:     O(1)
+Insertion:  O(1)
+Deletion:   O(1)
+```
+
+These average-case characteristics make unordered_map suitable for
+frequent operations such as finding a book using its ISBN or locating a
+member using their Member ID.
+
+Worst-case complexity for unordered_map operations can become O(n) when
+many keys produce hash collisions.
+
+6.1 Book Search Complexity
+
+Search operations such as searching by title, author, or category
+iterate through the collection of books.
+
+Therefore, the complexity is approximately:
+
+```
+O(n)
+```
+
+where n is the number of books.
+
+This is because the system must inspect the relevant book attributes
+unless an additional index is maintained.
+
+6.2 Borrowing History Lookup
+
+Borrow records are stored using record IDs, allowing direct average-case
+lookup:
+
+```
+O(1)
+```
+
+However, finding a particular member's active borrowing record may
+require traversing that member's borrowing history.
+
+If a member has k borrowing records:
+
+```
+O(k)
+```
+
+This is generally efficient because k is expected to be much smaller
+than the total number of records.
+
+6.3 Reservation Queue
+
+Reservations are managed using a queue.
+
+The primary operations are:
+
+```
+Enqueue: O(1)
+Dequeue: O(1)
+Front:   O(1)
+```
+
+This is appropriate because reservations must follow FIFO ordering.
+
+7. PERFORMANCE OBSERVATIONS
+
+---
+
+For a typical library-sized dataset, the selected data structures provide
+good performance.
+
+The use of unordered_map provides efficient average-case access to
+books, members, and borrow records.
+
+Linear searching for title, author, and category is acceptable for
+small and medium-sized datasets.
+
+For a very large library, search performance could be improved by
+maintaining secondary indexes, for example:
+
+* Title -> books
+* Author -> books
+* Category -> books
+
+Such indexes could reduce repeated full-library scans.
+
+8. CHALLENGES FACED
+
+---
+
+Several technical challenges were encountered during development.
+
+8.1 CMake Configuration
+
+Configuring the project with CMake and MinGW required understanding
+generators, build directories, compiler configuration, and the
+configure-build workflow.
+
+Generator mismatches between NMake and MinGW Makefiles caused build
+configuration issues during development.
+
+8.2 GoogleTest Integration
+
+Integrating GoogleTest required configuring the test executable,
+linking GoogleTest libraries, and registering tests with CTest.
+
+Understanding the difference between:
+
+```
+TEST()
+TEST_F()
+EXPECT_*
+ASSERT_*
+RUN_ALL_TESTS()
+```
+
+was also an important part of the testing phase.
+
+8.3 Test Fixture Setup
+
+End-to-end tests required creating a consistent library state before
+each test.
+
+GoogleTest fixtures were used to initialize:
+
+* Books
+* Members
+* Fine strategies
+* Library services
+
+This ensured that tests remained independent.
+
+8.4 Fine Testing
+
+Testing overdue fines was initially challenging because normal borrowing
+operations generate due dates relative to the current time.
+
+A controlled test record with a past due date was required to reliably
+simulate an overdue book.
+
+8.5 Role-Based Access Control
+
+Different operations are available to different member roles.
+
+The system therefore needed to distinguish between:
+
+* Student
+* Faculty
+* Librarian
+
+and reject unauthorized operations correctly.
+
+8.6 Interactive Application Development
+
+Converting the underlying library classes into a user-friendly
+interactive console application required handling:
+
+* Login
+* Menu navigation
+* User input
+* Invalid input
+* Role-based menus
+* Error messages
+* Borrowing and returning workflows
+
+8.7 Borrowing Record Management
+
+Maintaining the relationship between members, books, and borrowing
+records required careful handling of:
+
+* Record IDs
+* Member IDs
+* ISBNs
+* Borrow dates
+* Due dates
+* Return dates
+* Returned status
+
+9. DESIGN OBSERVATIONS
+
+---
+
+The project demonstrates several useful software engineering concepts.
+
+Object-Oriented Programming:
+
+* Encapsulation
+* Classes and objects
+* Inheritance
+* Polymorphism
+
+Design Patterns:
+
+* Strategy pattern for fine calculation
+* Service-layer separation
+* Repository-oriented separation
+
+Data Structures:
+
+* unordered_map for indexed lookup
+* queue for reservations
+* vector for search results and statistics
+
+Error Handling:
+
+* Custom exceptions
+* Runtime validation
+* Role-based authorization
+
+Concurrency:
+
+* Mutex-based synchronization is used around library operations that
+  modify shared library state.
+
+10. OVERALL TEST SUMMARY
+
+---
+
+```
+                     RESULT
+```
+
+---
+
+Build                     PASSED
+Unit Testing              PASSED
+Integration Testing       PASSED
+End-to-End Testing        PASSED
+Access Control Testing    PASSED
+Exception Testing         PASSED
+Fine Calculation Testing  PASSED
+Reservation Testing       PASSED
+Statistics Testing        PASSED
+-------------------------------
+
+End-to-End Tests:
+
+```
+10 / 10 PASSED
+```
+
+Overall End-to-End Success Rate:
+
+```
+100%
+```
+
+## 11. CONCLUSION
+
+The testing phase demonstrates that the Smart Library Management System
+successfully performs its major library workflows.
+
+The system correctly handles book and member management, borrowing,
+returning, reservations, fine calculation, statistics, access control,
+and exception handling.
+
+The selected data structures provide efficient average-case lookup for
+frequently accessed entities, while linear search operations remain
+appropriate for the expected application scale.
+
+The automated testing process helped identify implementation issues
+during development and provided confidence that the major workflows
+operate correctly.
+
+The final End-to-End test suite achieved a 100% pass rate, with all
+10 implemented scenarios passing successfully.

@@ -424,15 +424,22 @@ double Library::returnBook(
         );
     }
 
-    //6. Get return date
     auto returnDate = std::chrono::system_clock::now();
 
-    //Calculate fine if a fine strategy is set
+    // Mark the borrowing record as returned first.
+    // The fine strategy needs the actual return date.
+    activeRecord->markReturned(returnDate);
+
+    // Calculate fine if a fine strategy is set
     double fine = 0.0;
 
-    if(fineStrategy)
+    if (fineStrategy)
     {
-        fine = fineStrategy->calculateFine(*activeRecord, memberIt->second);
+        fine =
+            fineStrategy->calculateFine(
+                *activeRecord,
+                memberIt->second
+            );
     }
 
     totalFinesCollected += fine;
@@ -445,9 +452,6 @@ double Library::returnBook(
     std::to_string(fine)
 );
 }
-
-    //7. Close the borrow record
-    activeRecord->markReturned(returnDate);
 
     //8.Increase the available copies of the book
     bookIt->second.returnCopy();
@@ -624,10 +628,14 @@ void Library::addBorrowRecordForTesting(
         dueDate
     );
 
+    books.at(isbn).borrowCopy();
+
     borrowRecords.emplace(
         recordId,
         record
     );
+
+    members.at(memberId).addBorrowRecord(recordId);
 }
 
 void Library::setBookRepository(

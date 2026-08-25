@@ -366,3 +366,110 @@ TEST_F(
         3
     );
 }
+
+TEST_F(
+    EndToEndTest,
+    OverdueBookGeneratesFine
+)
+{
+    using namespace std::chrono;
+
+    auto now =
+        system_clock::now();
+
+    // Create a borrowing record that is already overdue.
+    auto borrowDate =
+        now - hours(24 * 20);
+
+    auto dueDate =
+        now - hours(24);
+
+    library.addBorrowRecordForTesting(
+        "TEST-OVERDUE-001",
+        "S001",
+        "9780132350884",
+        borrowDate,
+        dueDate
+    );
+
+    // Return the overdue book.
+    double fine =
+        service->returnBook(
+            "S001",
+            "9780132350884"
+        );
+
+    // Student has no grace period.
+    // The book is 1 day overdue, so fine should be > 0.
+    EXPECT_GT(
+        fine,
+        0.0
+    );
+
+    EXPECT_DOUBLE_EQ(
+        fine,
+        10.0
+    );
+}
+
+TEST_F(
+    EndToEndTest,
+    UnauthorizedMemberCannotAddBook
+)
+{
+    Book newBook(
+        "The Pragmatic Programmer",
+        "Andrew Hunt",
+        "9780135957059",
+        "Programming",
+        2
+    );
+
+    EXPECT_THROW(
+        service->addBook(
+            library.getMembers().at("S001"),
+            newBook
+        ),
+        UnauthorizedActionException
+    );
+
+    // Verify that the book was NOT added.
+    EXPECT_EQ(
+        library.getBooks().count("9780135957059"),
+        0
+    );
+}
+
+TEST_F(
+    EndToEndTest,
+    UnauthorizedMemberCannotRemoveBook
+)
+{
+    EXPECT_THROW(
+        service->removeBook(
+            library.getMembers().at("S001"),
+            "9780132350884"
+        ),
+        UnauthorizedActionException
+    );
+
+    // The book must still exist.
+    EXPECT_EQ(
+        library.getBooks().count("9780132350884"),
+        1
+    );
+}
+
+TEST_F(
+    EndToEndTest,
+    InvalidOperationThrowsException
+)
+{
+    EXPECT_THROW(
+        service->borrowBook(
+            "S001",
+            "9999999999999"
+        ),
+        BookNotFoundException
+    );
+}
