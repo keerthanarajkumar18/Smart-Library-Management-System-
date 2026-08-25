@@ -83,19 +83,6 @@ The following diagram represents the major classes, interfaces, relationships, a
 
 ![Smart Library Management System Class Diagram](docs/LMS%20Class%20Diagram.png)
 
-> **Note:** Copy `LMS Class Diagram.png` into the project's `docs/` directory using the structure shown below.
-
-```text
-Library_Management_System/
-├── docs/
-│   └── LMS Class Diagram.png
-├── include/
-├── src/
-├── tests/
-├── CMakeLists.txt
-└── README.md
-```
-
 ---
 
 # 4. Folder Structure
@@ -765,20 +752,7 @@ The project currently contains:
 
 ---
 
-# 23. Project Documentation
-
-Additional project documentation and diagrams are stored in:
-
-```text
-docs/
-```
-## Class Diagram
-
-![Class Diagram](docs/LMS Class Diagram.png)
-
----
-
-# 24. Conclusion
+# 23. Conclusion
 
 The **Smart Library Management System** demonstrates the development of a modular C++ application using object-oriented programming, layered architecture, design patterns, exception handling, CMake, and GoogleTest.
 
