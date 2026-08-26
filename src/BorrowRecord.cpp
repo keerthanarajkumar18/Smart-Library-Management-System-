@@ -1,5 +1,6 @@
 #include "BorrowRecord.h"
 #include <stdexcept>
+
 BorrowRecord::BorrowRecord(
     const std::string& recordId,
     const std::string& bookISBN,

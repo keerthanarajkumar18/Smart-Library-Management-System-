@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <chrono>
 #include <unordered_map>
+
 LibraryStatistics StatisticsService::generate(
     const Library& library
 )

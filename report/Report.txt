@@ -70,6 +70,194 @@ summary:
 [  FAILED  ] <number> tests.
 ```
 
+3.1 AccessControlTest 
+
+* StudentCannotAddBook
+* FacultyCannotAddBook
+* LibrarianCanAddBook
+* StudentCannotRemoveBook
+* FacultyCannotRemoveBook
+* LibrarianCanRemoveBook
+* StudentCannotUpdateBook
+* FacultyCannotUpdateBook
+* LibrarianCanUpdateBook
+* StudentCanSearchBook
+* FacultyCanSearchBook
+* LibrarianCanSearchBook
+
+3.2 BookTest
+
+* CreatesBookCorrectly
+* SetsTotalCopiesCorrectly
+* BorrowCopyDecreasesAvailability
+* ReturnCopyIncreasesAvailability
+* CannotBorrowWhenNoCopiesAvailable
+* CannotReturnBeyondTotalCopies
+
+3.3 BorrowRecordTest
+
+* CreatesRecordCorrectly
+* RecordIsInitiallyNotReturned
+* MarkReturnedChangesState
+* StoresReturnDate
+* StoresDueDateCorrectly
+* StoresBorrowDateCorrectly
+
+3.4 FineStrategyTest
+
+* NoFineWhenReturnedOnTime
+* CalculatesFineForOverdueBook
+* StudentPaysStandardRate
+* FacultyGetsGracePeriod
+* FacultyPaysAfterGracePeriod
+
+3.5 LibraryAccessControlTest
+
+* StudentCannotAddBook
+* FacultyCannotAddBook
+* LibrarianCanAddBook
+* StudentCannotRemoveBook
+* LibrarianCanRemoveBook
+
+3.6 LibraryBorrowReturnTest
+
+* BorrowDecreaseAvailability
+* BorrowCreatesRecord
+* BorrowAddsHistory
+* CannotBorrowUnavailableBook
+* CannotBorrowNonexistentBook
+* ReturnIncreasesAvailability
+* ReturnClosesRecord
+* CannotReturnTwice
+* CannotReturnWithoutBorrowing
+* WrongMemberCannotReturn
+
+3.7 LibraryExceptionTest
+
+* BaseException
+* BookNotFoundException
+* BookUnavailableException
+* InvalidISBNException
+* DerivedExceptionCanBeCaughtAsStdException
+
+3.8 LibraryExceptionIntegrationTest
+
+* GetBookThrowsBookNotFoundException
+* RemoveBookThrowsBookNotFoundException
+* BorrowBookThrowsBookUnavailableException
+* BorrowBookThrowsBookNotFoundException
+* ReturnBookThrowsAlreadyReturnedException
+* AddBookThrowsInvalidISBNException
+* AddBookRejectsIncorrectISBNLength
+
+3.9 LibraryFineTest
+
+* LibraryUsesInjectedFineStrategy
+* ReturnWithoutStrategyReturnsZeroFine
+
+3.10 LibraryLoggerTest 
+
+* LogsBorrow
+* LogsReturn
+* LogsReservation
+
+3.11 LibraryServiceTest
+
+* CanAddBook
+* CanBorrowBook
+* CanSearchBooks
+* CanReserveBook
+* CanGetStatistics
+* StudentCannotAddBook
+* FacultyCannotAddBook
+* LibrarianCanAddBook
+* StudentCannotRemoveBook
+* FacultyCannotRemoveBook
+* LibrarianCanRemoveBook
+* CanReturnBook
+* CanSearchBooksByTitle
+
+3.12 LibraryTest
+
+* AddsBook
+* FindsBookByISBN
+* RemovesBook
+* AddsMember
+* FindsMemberById
+* SearchesBookByTitle
+
+3.13 LoggerTest
+
+* CreatesLogFile
+* LogsMultipleOperations
+* LogFormatIsCorrect
+
+3.14 MemberTest
+
+* CreatesStudentCorrectly
+* CreatesFacultyCorrectly
+* CreatesLibrarianCorrectly
+* BorrowingHistoryStartsEmpty
+* AddsBorrowRecord
+* StoresMultipleBorrowRecords
+
+3.15 MultithreadingTest
+
+* OnlyOneThreadCanBorrowLastCopy
+* ConcurrentReturnAndBorrow
+* MultipleThreadsCannotOverbookInventory
+
+3.16 ReservationQueueTest
+
+* InitiallyEmpty
+* AddMember
+* MaintainsFIFOOrder
+* PopRemovesMember
+* FrontOnEmptyQueueThrows
+
+3.17 StatisticsTest
+
+* InitialTotalFinesIsZero
+* NoOverdueBooksInitially
+* CountsOverdueBooks
+* CanDisplayStatistics
+
+3.18 EndToEndTest
+
+* StudentCanBorrowBook
+* FacultyCanBorrowBook
+* StudentCanReserveUnavailableBook
+* ReturningBookProcessesReservation
+* StatisticsReflectLibraryActivity
+* CompleteLibraryWorkflow
+* OverdueBookGeneratesFine
+* UnauthorizedMemberCannotAddBook
+* UnauthorizedMemberCannotRemoveBook
+* InvalidOperationThrowsException
+
+| Section                             | Test Cases |
+| ----------------------------------- | ---------: |
+| 3.1 AccessControlTest               |         12 |
+| 3.2 BookTest                        |          6 |
+| 3.3 BorrowRecordTest                |          6 |
+| 3.4 FineStrategyTest                |          5 |
+| 3.5 LibraryAccessControlTest        |          5 |
+| 3.6 LibraryBorrowReturnTest         |         10 |
+| 3.7 LibraryExceptionTest            |          5 |
+| 3.8 LibraryExceptionIntegrationTest |          7 |
+| 3.9 LibraryFineTest                 |          2 |
+| 3.10 LibraryLoggerTest              |          3 |
+| 3.11 LibraryServiceTest             |         13 |
+| 3.12 LibraryTest                    |          6 |
+| 3.13 LoggerTest                     |          3 |
+| 3.14 MemberTest                     |          6 |
+| 3.15 MultithreadingTest             |          3 |
+| 3.16 ReservationQueueTest           |          5 |
+| 3.17 StatisticsTest                 |          4 |
+| 3.18 EndToEndTest                   |         10 |
+| **TOTAL**                           |    **111** |
+
+
 ## 4. END-TO-END TEST RESULTS
 
 The EndToEndTest suite validates complete workflows involving multiple

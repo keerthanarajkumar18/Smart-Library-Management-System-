@@ -14,6 +14,7 @@ enum class MemberRole
 class Member
 {
     private:
+    
         std::string memberId;
         std::string name;
         MemberRole role;

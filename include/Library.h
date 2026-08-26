@@ -1,6 +1,7 @@
 #ifndef LIBRARY_H
 #define LIBRARY_H
-#include <mutex> // std::mutex
+
+#include <mutex> 
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -14,7 +15,6 @@
 #include "FineStrategy.h"
 #include "AccessControl.h"
 #include "BookRepository.h"
-
 
 class Library
 {
@@ -51,8 +51,6 @@ private:
 
     // Total fines collected by the library
     double totalFinesCollected = 0.0;
-
-
 
 public:
 

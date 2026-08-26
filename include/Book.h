@@ -16,7 +16,7 @@ class Book
 
     public:
         Book(const std::string &title, const std::string &author, const std::string &isbn, const std::string &category, int totalCopies);
-        const std::string &getTitle() const;
+        const std::string& getTitle() const;
         const std::string& getAuthor() const;
         const std::string& getISBN() const;
         const std::string& getCategory() const;
